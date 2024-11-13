@@ -1,3 +1,43 @@
+"""
+Here's a list of potential social behaviors of termites and how they can be analyzed using data from the `.h5` file:
+
+### 1. **Proximity and Interaction Duration**:
+   - **Description**: The duration during which two termites remain within a certain distance from each other. This can indicate social interactions or cooperative behaviors such as feeding or nest building.
+   - **Calculation**: Use the coordinates of tracked points from the `.h5` file to compute distances between termites and determine how long they stay within a defined threshold.
+
+### 2. **Grooming Behavior**:
+   - **Description**: Grooming is an essential social behavior in termite colonies for maintaining hygiene and communication. Detecting when one termite approaches and stays near the abdomen or head of another for a set duration can indicate grooming.
+   - **Calculation**: Analyze the distance between the mandible of one termite and the abdomen or head of another, checking if this distance stays within a defined range for a specific number of frames.
+
+### 3. **Antennal Contact**:
+   - **Description**: Termites often use their antennae to touch and sense each other, which can be a form of communication.
+   - **Calculation**: Identify when the antennae (tracked as specific nodes) come close to the body or head of another termite, staying within a short distance range.
+
+### 4. **Following Behavior**:
+   - **Description**: This behavior occurs when one termite follows the movement path of another.
+   - **Calculation**: Track the paths of individual termites over time to identify cases where one termite maintains a consistent distance behind another for a series of frames.
+
+### 5. **Alignment and Group Movement**:
+   - **Description**: Termites moving in the same direction or aligned in a group can indicate cooperative tasks or foraging.
+   - **Calculation**: Compare the angles of movement vectors between multiple termites and identify consistent directional alignment.
+
+### 6. **Collision or Physical Contact**:
+   - **Description**: Instances where two termites come into direct contact.
+   - **Calculation**: Check when the distance between two tracked termite points falls below a minimal threshold (indicating touch).
+
+### 7. **Stationary Clustering**:
+   - **Description**: A group of termites remaining within a close area for an extended period could indicate colony defense or nest-related behavior.
+   - **Calculation**: Use clustering algorithms to find groups of termites that do not move significantly over time.
+
+### Which Data from the `.h5` File Can Be Used?
+- **Coordinates (`tracks`)**: The 3D array of termite positions over time, which is essential for calculating distances, angles, and movements.
+- **Node Names (`node_names`)**: Helps identify specific body parts like mandibles, antennae, and abdomens.
+- **Track Names (`track_names`)**: Used to differentiate between individual termites in the analysis.
+
+With these analyses in mind, we can now create the `social_behaviors.py` file to define these behaviors and make them accessible for integration into `sosyal.py`. Shall we proceed with drafting this file?
+"""
+
+
 
 # Termite Social Behavior Analysis
 
