@@ -4,7 +4,7 @@ def calculate_distance(point1, point2):
     """Calculate the Euclidean distance between two points."""
     return np.linalg.norm(point1 - point2)
 
-def detect_proximity_interactions(locations, proximity_threshold=100, min_duration_frames=60):
+def detect_proximity_interactions(locations, proximity_threshold=600, min_duration_frames=60):
     """Detect interactions where termites remain within a certain distance for a given duration.
     
     Parameters:
