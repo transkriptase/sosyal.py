@@ -1,59 +1,21 @@
-
 import numpy as np
-
-def calculate_distance(point1, point2):
-    """Calculate the Euclidean distance between two points."""
-    return np.linalg.norm(point1 - point2)
-
-def detect_proximity_interactions(locations, proximity_threshold=100, min_duration_frames=60):
-    """Detect interactions where termites remain within a certain distance for a given duration.
-    
-    Parameters:
-    - locations (numpy.array): The 4D array with shape (frames, body_parts, coordinates, termites).
-    - proximity_threshold (float): The distance threshold for defining proximity.
-    - min_duration_frames (int): The minimum number of frames to consider a sustained interaction.
-
-    Returns:
-    - list: A list of tuples representing interactions (termite_1, termite_2, start_frame, end_frame).
-    """
-    frame_count, _, _, num_termites = locations.shape
-    interactions = []
-
-    for i in range(num_termites):
-        for j in range(i + 1, num_termites):
-            start_frame = None
-            duration = 0
-
-            for frame in range(frame_count):
-                distance = calculate_distance(locations[frame, 1, :, i], locations[frame, 1, :, j])
-                if distance < proximity_threshold:
-                    if start_frame is None:
-                        start_frame = frame
-                    duration += 1
-                else:
-                    if duration >= min_duration_frames:
-                        interactions.append((i, j, start_frame, frame - 1))
-                    start_frame = None
-                    duration = 0
-
-            # Check for interaction that lasts until the last frame
-            if duration >= min_duration_frames:
-                interactions.append((i, j, start_frame, frame_count - 1))
-
-    return interactions
-
 
 def calculate_direction_vector(location1, location2):
     """Calculate the direction vector between two consecutive locations."""
     return location2 - location1
 
-def detect_leader_follower_behavior(locations, proximity_threshold=200, min_leader_frames=60):
+def is_moving(location1, location2, movement_threshold=1.0):
+    """Check if a termite is moving by calculating the distance between two consecutive positions."""
+    return np.linalg.norm(location2 - location1) > movement_threshold
+
+def detect_leader_follower_behavior(locations, proximity_threshold=1000, min_leader_frames=10, movement_threshold=1.0):
     """Detect leader-follower behavior between termites.
     
     Parameters:
     - locations (numpy.array): The 4D array with shape (frames, body_parts, coordinates, termites).
     - proximity_threshold (float): The distance threshold for defining proximity.
     - min_leader_frames (int): The minimum number of frames to confirm leader-follower behavior.
+    - movement_threshold (float): The minimum distance moved between frames to be considered moving.
     
     Returns:
     - list: A list of tuples representing leader-follower interactions (leader, follower, start_frame, end_frame).
@@ -70,6 +32,15 @@ def detect_leader_follower_behavior(locations, proximity_threshold=200, min_lead
             duration = 0
 
             for frame in range(1, frame_count):  # Start from frame 1 to calculate direction from frame 0
+                if not (is_moving(locations[frame - 1, 1, :, i], locations[frame, 1, :, i], movement_threshold) and
+                        is_moving(locations[frame - 1, 1, :, j], locations[frame, 1, :, j], movement_threshold)):
+                    # Skip this frame if either termite is not moving
+                    if duration >= min_leader_frames:
+                        interactions.append((i, j, start_frame, frame - 1))
+                    start_frame = None
+                    duration = 0
+                    continue
+
                 leader_vector = calculate_direction_vector(locations[frame - 1, 1, :, i], locations[frame, 1, :, i])
                 follower_vector = calculate_direction_vector(locations[frame - 1, 1, :, j], locations[frame, 1, :, j])
 
