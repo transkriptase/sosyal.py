@@ -49,6 +49,12 @@ def digital_imprint_frame(locations, frame, interactions, x_min, x_max, y_min, y
         y_coords = [locations[frame, node, 1, termite] for node in range(num_nodes)]
         ax.plot(x_coords, y_coords, color=colors(termite), alpha=0.6, label=f'Termite {termite}' if track_names is None else f'{track_names[termite]}')
 
+    # Connect dots to show whole termite individuals
+    for termite in range(num_termites):
+        x_coords = [locations[frame, node, 0, termite] for node in range(num_nodes)]
+        y_coords = [locations[frame, node, 1, termite] for node in range(num_nodes)]
+        ax.plot(x_coords, y_coords, color=colors(termite), linestyle='-', linewidth=1, alpha=0.5)
+
     ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='small')
     plt.tight_layout()
     plt.show()
