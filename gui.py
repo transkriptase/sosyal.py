@@ -55,6 +55,23 @@ def digital_imprint_frame(locations, frame, interactions, x_min, x_max, y_min, y
         y_coords = [locations[frame, node, 1, termite] for node in range(num_nodes)]
         ax.plot(x_coords, y_coords, color=colors(termite), linestyle='-', linewidth=1, alpha=0.5)
 
+    # Flip the y-axis to match the real image orientation
+    ax.invert_yaxis()
+
+    # Add optimized interaction markers
+    interaction_points = set()
+    for interaction in interactions:
+        active, passive, node, start_frame, end_frame = interaction
+        if start_frame <= frame <= end_frame:
+            interaction_x = locations[frame, node, 0, passive]
+            interaction_y = locations[frame, node, 1, passive]
+            interaction_points.add((interaction_x, interaction_y))
+
+    # Plot interaction points as smaller red stars
+    if interaction_points:
+        interaction_points = np.array(list(interaction_points))
+        ax.scatter(interaction_points[:, 0], interaction_points[:, 1], c='red', marker='*', s=50, label='Interaction Point')
+
     ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='small')
     plt.tight_layout()
     plt.show()
